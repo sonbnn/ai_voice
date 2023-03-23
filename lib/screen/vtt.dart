@@ -4,10 +4,12 @@ import 'dart:typed_data';
 import 'package:ai_voice/constant/constant.dart';
 import 'package:ai_voice/screen/widget/player_custom.dart';
 import 'package:ai_voice/screen/widget/recorder_custom.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/services.dart';
+
 
 class VTTScreen extends StatefulWidget {
   const VTTScreen({Key? key}) : super(key: key);
@@ -58,7 +60,6 @@ class _VTTScreenState extends State<VTTScreen> {
                 setState(
                   () {
                     audioPath = path;
-                    print(audioPath);
                     showPlayer = true;
                   },
                 );
@@ -69,25 +70,27 @@ class _VTTScreenState extends State<VTTScreen> {
 
   void convertToText() async {
     try {
-      Uint8List fileContent = File(audioPath).readAsBytesSync();
+      // Directory appDirectory = await getApplicationDocumentsDirectory();
+      // Uint8List data = File(audioPath).readAsBytesSync();
 
-      // String fileName = audioPath.split('/').last;
-      // print(fileName);
-      // FormData formData = FormData.fromMap({
-      //   "file":
-      //   await MultipartFile.fromFile(audioPath, filename:fileName),
-      // });
-      //
-      // File file = File(audioPath);
+      String fileName = audioPath.split('/').last;
+      FormData data = FormData.fromMap({
+        "file":
+        await MultipartFile.fromFile(audioPath, filename:fileName),
+      });
+
+      // File data = File(audioPath);
       // if (Platform.isIOS) {
-      //   file = await file.copy(file.path);
+      //   data = await data.copy(data.path);
       // }
+
+      // final data = audioPath.substring(audioPath.lastIndexOf('/'), audioPath.length);
 
       final http = Dio();
       http.options.headers['api-key'] = Constant.apiKey;
-      http.options.headers['Content-Type'] = audioPath.split('.').last;
-      final result = await http.post(Constant.apiLinkVoiceToText, data: fileContent);
-      print("-----result ${result.statusCode} ${result.statusMessage}");
+      http.options.headers['Content-Type'] = '.${audioPath.split('.').last}';
+      final result = (await http.post(Constant.apiLinkVoiceToText, data: data));
+      print(result.data.toString());
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Some thing went wrong! $e')));

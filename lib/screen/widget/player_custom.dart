@@ -156,6 +156,7 @@ class AudioPlayerCustomState extends State<AudioPlayerCustom> {
   }
 
   Future<void> play() {
+    print('kIsWeb $kIsWeb');
     return _audioPlayer.play(
       kIsWeb ? ap.UrlSource(widget.source) : ap.DeviceFileSource(widget.source),
     );

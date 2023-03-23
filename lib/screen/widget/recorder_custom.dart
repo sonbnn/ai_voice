@@ -47,8 +47,8 @@ class _AudioRecorderState extends State<AudioRecorder> {
           print('${AudioEncoder.aacLc.name} supported: $isSupported');
         }
 
-        // final devs = await _audioRecorder.listInputDevices();
-        // final isRecording = await _audioRecorder.isRecording();
+        final devs = await _audioRecorder.listInputDevices();
+        final isRecording = await _audioRecorder.isRecording();
 
         await _audioRecorder.start();
         _recordDuration = 0;
