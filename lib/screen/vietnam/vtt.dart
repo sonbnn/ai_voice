@@ -11,14 +11,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 
-class VTTScreen extends StatefulWidget {
-  const VTTScreen({Key? key}) : super(key: key);
+class VTTScreenVN extends StatefulWidget {
+  const VTTScreenVN({Key? key}) : super(key: key);
 
   @override
-  State<VTTScreen> createState() => _VTTScreenState();
+  State<VTTScreenVN> createState() => _VTTScreenVNState();
 }
 
-class _VTTScreenState extends State<VTTScreen> {
+class _VTTScreenVNState extends State<VTTScreenVN> {
   bool showPlayer = false;
   String audioPath = '';
   String textRender = '';
@@ -34,6 +34,8 @@ class _VTTScreenState extends State<VTTScreen> {
     await Permission.microphone.request();
     await Permission.storage.request();
     await Permission.mediaLibrary.request();
+    await Permission.accessMediaLocation.request();
+    await Permission.manageExternalStorage.request();
   }
 
   @override
@@ -70,26 +72,18 @@ class _VTTScreenState extends State<VTTScreen> {
 
   void convertToText() async {
     try {
-      // Directory appDirectory = await getApplicationDocumentsDirectory();
-      // Uint8List data = File(audioPath).readAsBytesSync();
 
-      String fileName = audioPath.split('/').last;
-      FormData data = FormData.fromMap({
-        "file":
-        await MultipartFile.fromFile(audioPath, filename:fileName),
+      FormData formData = FormData.fromMap({
+        "file": File(audioPath).readAsBytes()
       });
-
-      // File data = File(audioPath);
-      // if (Platform.isIOS) {
-      //   data = await data.copy(data.path);
-      // }
-
-      // final data = audioPath.substring(audioPath.lastIndexOf('/'), audioPath.length);
 
       final http = Dio();
       http.options.headers['api-key'] = Constant.apiKey;
-      http.options.headers['Content-Type'] = '.${audioPath.split('.').last}';
-      final result = (await http.post(Constant.apiLinkVoiceToText, data: data));
+      http.options.headers['Content-Type'] = '${audioPath.split('.').last}';
+      final result = (await http.post(Constant.apiLinkVoiceToText, data:  File(audioPath).readAsBytes()));
+      if(result.data["status"] == 500){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.data["message"])));
+      }
       print(result.data.toString());
     } catch (e) {
       print(e);

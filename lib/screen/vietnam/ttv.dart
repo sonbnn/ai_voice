@@ -3,14 +3,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
-class TTVScreen extends StatefulWidget {
-  const TTVScreen({Key? key}) : super(key: key);
+class TTVScreenVN extends StatefulWidget {
+  const TTVScreenVN({Key? key}) : super(key: key);
 
   @override
-  State<TTVScreen> createState() => _TTVScreenState();
+  State<TTVScreenVN> createState() => _TTVScreenVNState();
 }
 
-class _TTVScreenState extends State<TTVScreen> {
+class _TTVScreenVNState extends State<TTVScreenVN> {
   TextEditingController textEditingController = TextEditingController();
   String? urlMP3;
   final AudioPlayer audioPlayer = AudioPlayer();
